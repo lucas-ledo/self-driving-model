@@ -176,27 +176,8 @@ def train(args):
 
 
     # Instancia el modelo preentrenado (backbone)
-    tabular_input_dims = {'gnss_sensor': 3}
-    backbone = MultiSensorCrossAttentionTransformer(
-        sensor_list=('depth_cam', 'rgb_front'),
-        tabular_sensors=('gnss_sensor',),
-        tabular_input_dims=tabular_input_dims,
-        image_feature_dim=128,
-        tabular_feature_dim=64,
-        lidar_feature_dim=128,
-        cross_d_model=128,
-        cross_nhead=4,
-        cross_dropout=0.3,
-        temporal_d_model=128,
-        temporal_nhead=4,
-        temporal_num_layers=2,
-        temporal_dim_feedforward=256,
-        temporal_dropout=0.1,
-        out_dim=3
-    ).to(device)
     if args.pretrained_path is not None and os.path.isfile(args.pretrained_path):
-        state_dict = torch.load(args.pretrained_path, map_location=device)
-        backbone.load_state_dict(state_dict)
+        backbone = torch.load(args.pretrained_path, map_location=device)
         logging.info(f"Cargados pesos preentrenados desde {args.pretrained_path}")
     else:
         logging.info("No se ha cargado modelo preentrenado (se usará el inicializado aleatoriamente).")
@@ -207,7 +188,7 @@ def train(args):
     actor_critic.train()
 
     optimizer = optim.Adam([
-        {'params': backbone.parameters(), 'lr': args.learning_rate * 0.2},
+        {'params': backbone.parameters(), 'lr': args.learning_rate * 0.1},
         {'params': actor_critic.value_head.parameters()},
         {'params': [actor_critic.log_std]}
     ], lr=args.learning_rate)
@@ -351,13 +332,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Entrenamiento RL con PPO para conducción autónoma en CARLA")
     parser.add_argument("--pretrained_path", type=str, default='checkpoint_chunks_final.pt',
                         help="Ruta al modelo preentrenado (archivo .pth)")
-    parser.add_argument("--learning_rate", type=float, default=1e-5,
+    parser.add_argument("--learning_rate", type=float, default=1e-4,
                         help="Tasa de aprendizaje")
     parser.add_argument("--rollout_length", type=int, default=32,
                         help="Cantidad de timesteps por rollout")
     parser.add_argument("--ppo_epochs", type=int, default=4,
                         help="Cantidad de épocas PPO por actualización")
-    parser.add_argument("--clip_param", type=float, default=0.1,
+    parser.add_argument("--clip_param", type=float, default=0.2,
                         help="Valor de clip para PPO")
     parser.add_argument("--gamma", type=float, default=0.99,
                         help="Factor de descuento")
@@ -365,9 +346,9 @@ if __name__ == "__main__":
                         help="Lambda para GAE")
     parser.add_argument("--num_updates", type=int, default=10000,
                         help="Cantidad de actualizaciones de PPO")
-    parser.add_argument("--save_interval", type=int, default=100,
+    parser.add_argument("--save_interval", type=int, default=50,
                         help="Intervalo (en actualizaciones) para guardar checkpoints")
-    parser.add_argument("--seed", type=int, default=43, help="Semilla para reproducibilidad")
+    parser.add_argument("--seed", type=int, default=100, help="Semilla para reproducibilidad")
     args = parser.parse_args()
 
     train(args)
