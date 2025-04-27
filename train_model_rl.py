@@ -36,7 +36,7 @@ pretrained_model = MultiSensorCrossAttentionTransformer(
     out_dim=3
 ).to(device)
 
-pretrained_model_path = 'checkpoint_chunks_final.pt'  # Reemplaza con la ruta real
+pretrained_model_path = 'checkpoint_chunks_final.pt'  
 pretrained_model.load_state_dict(torch.load(pretrained_model_path, map_location=device))
 pretrained_model.eval()
 
@@ -70,7 +70,7 @@ class MultiSensorFeaturesExtractor(BaseFeaturesExtractor):
         """
         # Extraer las observaciones del diccionario
         rgb = observations["rgb_front"]    # shape: (C, H, W)
-        depth = observations["depth_cam"]  # shape: (1, H, W) o similar
+        depth = observations["depth_cam"]  # shape: (1, H, W)
 
         # Normalizar las imágenes si es necesario
         rgb = rgb.float() / 255.0          # Normalizar RGB a [0, 1]
@@ -143,7 +143,6 @@ class CustomMultiSensorPolicy(ActorCriticPolicy):
         
         # 3) Dimensión de las features (por defecto 256 del extractor).
         #    la guardamos en self.features_dim
-        #    (SB3 hace lo propio, pero reafirmamos por claridad).
         self.features_dim = self.features_extractor.features_dim
         
         # 4) Actor head: a partir del embedding (B, 256) -> (B, 3) (mu)
@@ -218,9 +217,9 @@ from carla_gym_env import CarlaEnv
 env = CarlaEnv(
         render_display=False,
         seed=42,
-        image_width=240,     # Debe coincidir con las transformaciones
-        image_height=120,    # Debe coincidir con las transformaciones
-        frame_skip=1,        # Por ejemplo
+        image_width=240,     
+        image_height=120,    
+        frame_skip=1,        
         camera_fov=90,
         vehicle_model="vehicle.tesla.model3",
         enable_lane_following=True
@@ -261,7 +260,7 @@ model = PPO(
 )
 
 # Entrenar el modelo
-total_timesteps = 100000  # Ajusta según tus necesidades
+total_timesteps = 100000  
 model.learn(
     total_timesteps=total_timesteps,
     callback=[checkpoint_callback, eval_callback],
@@ -284,7 +283,7 @@ for episode in range(num_episodes):
         action, _states = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
         total_reward += reward
-        env.render()  # Opcional: Visualizar el entorno
+        env.render()  
     episode_rewards.append(total_reward)
     print(f"Episode {episode + 1}: Total Reward = {total_reward}")
 

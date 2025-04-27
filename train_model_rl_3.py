@@ -166,9 +166,9 @@ def train(args):
     env = CarlaEnv(
         render_display=True,
         seed=42,
-        image_width=240,     # Debe coincidir con las transformaciones
-        image_height=120,    # Debe coincidir con las transformaciones
-        frame_skip=5,        # Por ejemplo
+        image_width=240,     
+        image_height=120,   
+        frame_skip=5,        
         camera_fov=90,
         vehicle_model="vehicle.tesla.model3",
         enable_lane_following=True
@@ -196,7 +196,7 @@ def train(args):
 
 
     # Hiperparámetros de PPO
-    rollout_length = args.rollout_length      # número de timesteps por actualización
+    rollout_length = args.rollout_length      
     ppo_epochs = args.ppo_epochs
     clip_param = args.clip_param
     gamma = args.gamma
@@ -228,7 +228,7 @@ def train(args):
             # Almacena datos
             processed_obs = process_obs(obs, device)  # Devuelve (batch_imgs, batch_tabs, batch_lidar)
             obs_list.append(processed_obs)
-            actions_list.append(action)  # acción ya postprocesada
+            actions_list.append(action)  
             log_probs_list.append(log_prob.item())
             rewards_list.append(reward)
             values_list.append(value.item())

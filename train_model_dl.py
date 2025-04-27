@@ -61,7 +61,7 @@ def train_model_chunks(
     num_epochs=200,
     batch_size=4,
     sequence_length=50,  
-    chunk_size=16,       # ahora sólo se aplica en la parte transformadora
+    chunk_size=16,       
     learning_rate=1e-4,
     weight_decay=1e-5,
     device='cuda',

@@ -36,7 +36,7 @@ PROGRESS_FACTOR = 1.0
 REWARD_CENTER_LINE = 0.01
 
 # Ejemplo de velocidad segura
-MAX_SAFE_SPEED = 8.0  # m/s aprox 72 km/h
+MAX_SAFE_SPEED = 8.0  
 REWARD_SPEED_FACTOR = 0.1
 
 
@@ -369,7 +369,7 @@ class CarlaEnv(gym.Env):
         Retorna la distancia (en metros) del vehículo al centro del carril más cercano.
         """
         if not self.vehicle:
-            return 0.0  # o algún valor por defecto si no tienes vehículo aún
+            return 0.0  
 
         # 1. Transform del vehículo
         vehicle_transform = self.vehicle.get_transform()  # carla.Transform
@@ -477,7 +477,6 @@ class CarlaEnv(gym.Env):
         depth_bp.set_attribute("image_size_x", str(self.image_width))
         depth_bp.set_attribute("image_size_y", str(self.image_height))
         depth_bp.set_attribute("fov", str(self.camera_fov))
-        # Otras configuraciones opcionales: profundidad en medidores, etc.
 
         depth_transform = carla.Transform(carla.Location(x=1.6, y=0.0, z=1.7))
         try:
@@ -494,7 +493,6 @@ class CarlaEnv(gym.Env):
     def _attach_gnss_sensor(self):
         blueprint_library = self.world.get_blueprint_library()
         gnss_bp = blueprint_library.find("sensor.other.gnss")
-        # Configura la frecuencia de actualización (opcional)
         gnss_bp.set_attribute("sensor_tick", "0.1")
 
         gnss_transform = carla.Transform(carla.Location(x=0.0, y=0.0, z=2.0))
@@ -516,7 +514,7 @@ class CarlaEnv(gym.Env):
         lidar_bp.set_attribute("range", "50.0")
         lidar_bp.set_attribute("rotation_frequency", "10.0")
         lidar_bp.set_attribute("channels", "32")
-        lidar_bp.set_attribute("points_per_second", "56000")  # Ajusta según quieras
+        lidar_bp.set_attribute("points_per_second", "56000") 
 
         lidar_transform = carla.Transform(carla.Location(x=0.0, y=0.0, z=2.5))
         try:
@@ -581,12 +579,6 @@ class CarlaEnv(gym.Env):
         try:
             array = np.frombuffer(image.raw_data, dtype=np.uint8)
             array = array.reshape((image.height, image.width, 4))  # BGRA
-            # Para convertir a valores de profundidad en metros:
-            #   Valor depth = R + G*256 + B*256*256 / (factor)
-            #   Factor depende de la configuración. Ej. 16777215.0
-            #   (por defecto el canal RGB codifica la profundidad).
-            # Aquí simplificamos y lo dejamos como "intensidad" normalizada.
-            # (Este mapeo puede variar según tu setup en CARLA)
             depth_meters = array[:, :, 2] + array[:, :, 1] * 256 + array[:, :, 0] * 256 * 256
             depth_meters = depth_meters / 16777215.0  # Normalizar a [0..1]
             self.depth_image = depth_meters.astype(np.float32)
@@ -696,7 +688,7 @@ class CarlaEnv(gym.Env):
         else:
             dist = 0.0
 
-        distance_to_center = self._distance_to_lane_center()  # Método que estimes
+        distance_to_center = self._distance_to_lane_center() 
         if distance_to_center < self.distance_2lane_center_tol:
             # Cuanto más cerca, mayor la recompensa
             reward += REWARD_CENTER_LINE * (1 - distance_to_center / self.distance_2lane_center_tol)

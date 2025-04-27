@@ -164,7 +164,7 @@ class CarlaEnv(gym.Env):
         self.enable_lane_following = enable_lane_following
         self.current_step = 0
         self.route_points = None  
-        self.current_route_index = 1     # Índice del waypoint al que nos dirigimos
+        self.current_route_index = 1     
         self.route_threshold = 0.5
         self.prev_distance_wp = 0
         self.distance_2lane_center_tol = 1
@@ -219,8 +219,6 @@ class CarlaEnv(gym.Env):
         self.crossed_solid_line_count = 0
         self.crossed_broken_line = False
 
-        # Ventana OpenCV opcional removida, ya que usaremos Pygame
-
     def seed(self, seed=None):
         """Fija la semilla para la reproducibilidad."""
         self.np_random, seed = gym.utils.seeding.np_random(seed)
@@ -270,9 +268,9 @@ class CarlaEnv(gym.Env):
         self._spawn_vehicle(spawn_transform=spawn_point)
 
         # 3. Adjuntar los sensores que quieras grabar
-        self._attach_cameras()       # frontal, trasera, laterales
-        self._attach_depth_camera()  # depth
-        self._attach_semantic_camera()  # segmentación
+        self._attach_cameras()       
+        self._attach_depth_camera()  
+        self._attach_semantic_camera()  
         self._attach_lidar_sensor()
         self._attach_radar_sensor()
         self._attach_gnss_sensor()
@@ -335,8 +333,8 @@ class CarlaEnv(gym.Env):
             return 0.0  # o algún valor por defecto si no tienes vehículo aún
 
         # 1. Transform del vehículo
-        vehicle_transform = self.vehicle.get_transform()  # carla.Transform
-        vehicle_location = vehicle_transform.location      # carla.Location
+        vehicle_transform = self.vehicle.get_transform() 
+        vehicle_location = vehicle_transform.location      
 
         # 2. Waypoint del carril en la ubicación actual
         #    lane_type=carla.LaneType.Driving te asegura buscar carriles transitables
@@ -359,7 +357,7 @@ class CarlaEnv(gym.Env):
         try:
             settings = self.world.get_settings()
             settings.synchronous_mode = True
-            settings.fixed_delta_seconds = 0.1  # ~20 FPS
+            settings.fixed_delta_seconds = 0.1 
             settings.no_rendering_mode = False
             self.world.apply_settings(settings)
             logger.info("Modo síncrono activado.")
@@ -383,8 +381,6 @@ class CarlaEnv(gym.Env):
             self.route_points, spawn_point = self._generate_predefined_route()
             if len(self.route_points) == 0:
                 raise ValueError("No hay puntos de ruta definidos.")
-            # Spawnear vehículo en la ubicación del primer waypoint
-            # Ajustar un 'carla.Transform' a partir de la 'carla.Location':
             self._spawn_vehicle(spawn_transform=spawn_point)
         except Exception as e: 
             logger.error(f"Error al spawnear el vehículo:{e}")
@@ -585,15 +581,6 @@ class CarlaEnv(gym.Env):
             # next() retorna una lista de waypoints posibles, tomamos el primero
             route.append(next_wp.transform.location)
             current_waypoint = next_wp
-        
-        #for i in range(len(route) - 1):
-        #    self.world.debug.draw_line(
-        #        route[i],
-        #        route[i+1],
-        #        thickness=0.1,
-        #        color=carla.Color(r=255, g=0, b=0),
-        #        life_time=0
-        #    )
 
         return route, start_spawn
 
@@ -1031,7 +1018,7 @@ class CarlaEnv(gym.Env):
             ]:
                 crossed_solid = True
                 logger.info("Invasión de carril sólida detectada!")
-                break  # No es necesario continuar si ya se detectó una línea sólida
+                break  
             elif marking.type in [
                 carla.LaneMarkingType.Broken,
                 carla.LaneMarkingType.BrokenBroken,
@@ -1040,13 +1027,12 @@ class CarlaEnv(gym.Env):
             ]:
                 crossed_broken = True
                 logger.info("Invasión de carril discontinua detectada!")
-                # No se hace break aquí si deseas detectar múltiples invasiones de carril en una misma iteración
 
-        # Actualizar contadores fuera del bucle
+        
         if crossed_solid:
             self.crossed_solid_line_count += 1
         else:
-            self.crossed_solid_line_count = 0  # Resetear si no se ha cruzado una línea sólida
+            self.crossed_solid_line_count = 0  
 
         if crossed_broken:
             self.crossed_broken_line = True

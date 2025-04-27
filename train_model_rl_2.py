@@ -215,7 +215,7 @@ def train(args):
 
 
     # Hiperparámetros de PPO
-    rollout_length = args.rollout_length      # número de timesteps por actualización
+    rollout_length = args.rollout_length     # Cantidad de timesteps por rollout
     ppo_epochs = args.ppo_epochs
     clip_param = args.clip_param
     gamma = args.gamma
@@ -247,7 +247,7 @@ def train(args):
             # Almacena datos
             processed_obs = process_obs(obs, device)  # Devuelve (batch_imgs, batch_tabs, batch_lidar)
             obs_list.append(processed_obs)
-            actions_list.append(action)  # acción ya postprocesada
+            actions_list.append(action) 
             log_probs_list.append(log_prob.item())
             rewards_list.append(reward)
             values_list.append(value.item())

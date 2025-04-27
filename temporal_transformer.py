@@ -33,7 +33,7 @@ class TemporalTransformer(nn.Module):
             dim_feedforward=dim_feedforward,
             dropout=dropout,
             activation='relu',
-            batch_first=True  # Cambiado a True
+            batch_first=True  
         )
         self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
         self.pos_encoder = LearnedPositionalEncoding(d_model)

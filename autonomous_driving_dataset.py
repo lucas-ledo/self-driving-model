@@ -194,12 +194,11 @@ class AutonomousDrivingDataset(Dataset):
 
         with open(path, 'r', newline='') as f:
             reader = csv.DictReader(f)
-            fieldnames = reader.fieldnames  # Obtiene el orden original de las columnas
+            fieldnames = reader.fieldnames
 
             if fieldnames is None:
                 raise ValueError(f"El CSV no tiene encabezados de columna: {path}")
 
-            # Si es gnss_sensor, ignorar la primera columna
             if folder == 'gnss_sensor':
                 fieldnames = fieldnames[1:]
 

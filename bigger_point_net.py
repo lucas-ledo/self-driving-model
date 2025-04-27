@@ -35,35 +35,35 @@ class BiggerPointNet(nn.Module):
         B, N, _ = x.shape
 
         # mlp1
-        x = self.mlp1(x)              # (B, N, 64)
+        x = self.mlp1(x)              
         x = x.view(B*N, 32)
         x = self.bn1(x)
         x = F.relu(x)
         x = x.view(B, N, 32)
 
         # mlp2
-        x = self.mlp2(x)              # (B, N, 128)
+        x = self.mlp2(x)              
         x = x.view(B*N, 64)
         x = self.bn2(x)
         x = F.relu(x)
         x = x.view(B, N, 64)
 
         # mlp3
-        x = self.mlp3(x)              # (B, N, 256)
+        x = self.mlp3(x)             
         x = x.view(B*N, 128)
         x = self.bn3(x)
         x = F.relu(x)
         x = x.view(B, N, 128)
 
         # mlp4
-        x = self.mlp4(x)              # (B, N, 512)
+        x = self.mlp4(x)              
         x = x.view(B*N, 256)
         x = self.bn4(x)
         x = F.relu(x)
         x = x.view(B, N, 256)
 
         # mlp5
-        x = self.mlp5(x)              # (B, N, 1024)
+        x = self.mlp5(x)             
         x = x.view(B*N, 512)
         x = self.bn5(x)
         x = F.relu(x)
@@ -73,7 +73,7 @@ class BiggerPointNet(nn.Module):
         x = self.dropout(x)
 
         # Global Max Pool
-        x = x.max(dim=1)[0]           # (B, 1024)
+        x = x.max(dim=1)[0]           
 
         # fc_final
         x = self.fc_final(x)          # (B, output_dim)
@@ -128,7 +128,7 @@ def my_collate_fn(batch):
 
     # c) LiDAR => list de longitud B, cada elemento es [ (num_points, 3) x T ]
     # Lo mantenemos igual, pues cada sample puede tener distinta cantidad de puntos
-    final_lidar = batch_lidar_list  # => list of length B
+    final_lidar = batch_lidar_list  
 
     # d) Controls => (B, T, 3)
     final_ctrls = torch.stack(batch_ctrls_list, dim=0)  # => (B, T, 3)
