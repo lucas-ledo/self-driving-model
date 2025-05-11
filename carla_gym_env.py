@@ -180,7 +180,7 @@ class CarlaEnv(gym.Env):
             try:
                 self.client = carla.Client(self.host, self.port)
                 self.client.set_timeout(self.world_timeout)
-                self.world = self.client.load_world("Town04")
+                self.world = self.client.load_world("Town03")
                 if self.world is not None:
                     logger.info(f"Conectado a CARLA en {self.host}:{self.port}")
                     return
